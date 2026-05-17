@@ -1,0 +1,9 @@
+{
+  "name": "SmartGrow",
+  "short_name": "SmartGrow",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    { "src": "/favicon.png", "sizes": "64x64", "type": "image/png" }
+  ]
+}

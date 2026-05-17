@@ -1,0 +1,1150 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+:root{
+  --bg:#e8e5de;--sidebar-bg:#f5f3ef;--card-bg:#f5f3ef;--card-bg2:#ffffff;
+  --green-dark:#2d4a1e;--green:#3d6b27;--green-light:#c8e6a0;--lime:#c5e235;
+  --text:#1a1a1a;--text2:#666;--text3:#999;--border:#ddd9d0;
+  --radius:14px;--radius-sm:8px;--radius-xs:6px;
+}
+.app{display:flex;height:820px;background:var(--bg);border-radius:20px;overflow:hidden;font-size:13px}
+
+/* SIDEBAR */
+.sidebar{width:200px;background:var(--sidebar-bg);display:flex;flex-direction:column;padding:20px 0;flex-shrink:0;border-right:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.logo-icon{width:32px;height:32px;background:var(--green-dark);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:18px;height:18px;fill:#c5e235}
+.logo-text{font-size:15px;font-weight:700;color:var(--text)}
+.nav-section{flex:1;padding:0 10px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all 0.18s;margin-bottom:2px}
+.nav-item:hover{background:rgba(0,0,0,0.05);color:var(--text)}
+.nav-item.active{background:var(--green-dark);color:#fff}
+.nav-item i{font-size:16px;width:18px;text-align:center}
+.nav-item.active i{color:#c5e235}
+.nav-bottom{padding:10px;border-top:1px solid var(--border);margin-top:auto}
+.nav-bottom .nav-item{margin-bottom:2px}
+.user-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer}
+.user-av{width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.user-name{font-size:12px;font-weight:600;color:var(--text)}
+.badge{background:#c5e235;color:#1a3a00;border-radius:99px;font-size:10px;font-weight:700;padding:1px 7px;margin-left:auto}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.field-title{display:flex;align-items:center;gap:12px}
+.back-btn{width:30px;height:30px;background:rgba(255,255,255,0.7);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);border:none;font-size:14px}
+.field-name{font-size:22px;font-weight:700;color:var(--text)}
+.field-coords{font-size:11px;color:var(--text3);margin-top:1px}
+.topbar-right{display:flex;gap:10px;align-items:center}
+.tab-btn{padding:7px 16px;border-radius:99px;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all 0.18s}
+.tab-btn.active{background:var(--green-dark);color:#fff}
+.tab-btn:not(.active){background:rgba(255,255,255,0.6);color:var(--text2)}
+
+/* MAP AREA */
+.map-area{flex:1;position:relative;overflow:hidden}
+.map-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse 60% 40% at 40% 60%, #4a7c2f 0%, #2d5a1b 40%, #1a3d10 70%, #0f2a08 100%);
+  overflow:hidden}
+.map-bg::before{content:'';position:absolute;inset:0;background:
+  repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(255,255,255,0.03) 28px,rgba(255,255,255,0.03) 29px),
+  repeating-linear-gradient(90deg,transparent,transparent 28px,rgba(255,255,255,0.03) 28px,rgba(255,255,255,0.03) 29px)}
+.map-contour{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0.15}
+.map-contour svg{width:100%;height:100%}
+.map-road{position:absolute;bottom:30%;left:0;right:0;height:12px;background:rgba(200,180,120,0.5);transform:rotate(-3deg)}
+.map-road2{position:absolute;top:0;bottom:0;right:25%;width:10px;background:rgba(200,180,120,0.4)}
+.field-patch{position:absolute;inset:10% 30% 20% 5%;background:rgba(80,140,40,0.3);border:2px solid rgba(180,220,100,0.4);border-radius:4px}
+.field-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:rgba(255,255,255,0.9);border-radius:50%;border:2px solid white}
+.field-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.5)}
+
+/* OVERLAY CARDS on map */
+.map-overlay{position:absolute;inset:0;pointer-events:none;padding:16px}
+.top-stats{display:flex;gap:10px;pointer-events:all}
+.stat-card{background:rgba(245,243,239,0.92);backdrop-filter:blur(8px);border-radius:var(--radius);padding:12px 16px;min-width:120px;border:1px solid rgba(255,255,255,0.6)}
+.stat-card-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.stat-card-val{font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.stat-card-sub{font-size:10px;color:var(--text3);margin-top:3px}
+.stat-icon{width:20px;height:20px;border-radius:5px;background:rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:center;font-size:11px}
+
+/* OPTIMAL ZONE CARD */
+.zone-card{position:absolute;left:16px;top:50%;transform:translateY(-50%);pointer-events:all;background:rgba(245,243,239,0.92);backdrop-filter:blur(8px);border-radius:var(--radius);padding:16px;width:280px;border:1px solid rgba(255,255,255,0.6)}
+.zone-badge{background:#c5e235;color:#1a3a00;border-radius:99px;font-size:10px;font-weight:700;padding:3px 10px;display:inline-block;margin-bottom:10px}
+.zone-pct{font-size:48px;font-weight:800;color:var(--text);line-height:1}
+.zone-pct span{font-size:28px}
+.zone-sub{font-size:11px;color:var(--text2);margin-top:4px}
+.crop-list{margin-left:auto;display:flex;flex-direction:column;gap:8px}
+.crop-item{background:rgba(255,255,255,0.7);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.18s;border:1px solid rgba(0,0,0,0.06)}
+.crop-item:hover{background:white;transform:translateX(-2px)}
+.crop-emoji{font-size:20px}
+.crop-name{font-size:13px;font-weight:600;color:var(--text)}
+.crop-yield{font-size:11px;color:var(--text3)}
+.add-crop-btn{background:#c5e235;border:none;border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;font-weight:700;color:#1a3a00;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.18s;white-space:nowrap}
+.add-crop-btn:hover{background:#b8d620;transform:scale(1.02)}
+.zone-inner{display:flex;gap:14px;align-items:flex-end}
+
+/* BOTTOM PANELS */
+.bottom-panels{position:absolute;bottom:0;left:0;right:0;pointer-events:all;display:flex;gap:10px;padding:10px 16px 14px}
+.npk-card{background:rgba(245,243,239,0.95);backdrop-filter:blur(10px);border-radius:var(--radius);padding:16px 18px;flex:1;border:1px solid rgba(255,255,255,0.7)}
+.npk-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.npk-title{font-size:13px;font-weight:700;color:var(--text)}
+.npk-sub{font-size:10px;color:var(--text3);margin-bottom:14px}
+.tab-pills{display:flex;gap:6px}
+.pill{padding:4px 12px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all 0.18s}
+.pill.on{background:var(--green-dark);color:#fff}
+.pill.off{background:rgba(0,0,0,0.06);color:var(--text2)}
+.npk-row{margin-bottom:10px}
+.npk-row-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.npk-label{font-size:12px;font-weight:600;color:var(--text)}
+.npk-val{font-size:12px;font-weight:700;color:var(--text2)}
+.npk-track{height:5px;background:#e8e4dc;border-radius:99px;overflow:hidden}
+.npk-fill{height:100%;border-radius:99px;transition:width 1.2s cubic-bezier(0.34,1.56,0.64,1)}
+.npk-fill.n{background:var(--green)}
+.npk-fill.p{background:#638822}
+.npk-fill.k{background:#c5e235}
+
+.lai-card{background:rgba(40,55,28,0.92);backdrop-filter:blur(10px);border-radius:var(--radius);padding:16px 18px;width:160px;border:1px solid rgba(255,255,255,0.1);flex-shrink:0}
+.lai-title{font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px}
+.lai-val{font-size:32px;font-weight:800;color:#c5e235;line-height:1}
+.lai-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px}
+.lai-chart{margin-top:12px;display:flex;align-items:flex-end;gap:3px;height:40px}
+.lai-bar{flex:1;border-radius:3px 3px 0 0;background:rgba(197,226,53,0.25);transition:height 0.8s ease}
+.lai-bar.hi{background:#c5e235}
+.lai-week{display:flex;justify-content:space-between;margin-top:5px}
+.lai-week span{font-size:9px;color:rgba(255,255,255,0.3)}
+
+/* WEATHER SIDE CARD */
+.weather-card{background:rgba(245,243,239,0.92);backdrop-filter:blur(8px);border-radius:var(--radius);padding:14px 16px;width:160px;flex-shrink:0;border:1px solid rgba(255,255,255,0.6)}
+.weather-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
+.weather-main{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.weather-temp{font-size:28px;font-weight:800;color:var(--text)}
+.weather-icon{font-size:28px}
+.weather-days{display:flex;flex-direction:column;gap:6px}
+.wd{display:flex;align-items:center;justify-content:space-between}
+.wd-label{font-size:10px;color:var(--text3);width:24px}
+.wd-icon{font-size:12px}
+.wd-bar{flex:1;height:3px;background:#e8e4dc;border-radius:99px;margin:0 6px;overflow:hidden}
+.wd-fill{height:100%;border-radius:99px;background:var(--green)}
+.wd-mm{font-size:10px;color:var(--text3);text-align:right;width:24px}
+
+/* TASK CARD */
+.task-card{position:absolute;right:16px;top:140px;width:180px;pointer-events:all;background:rgba(245,243,239,0.92);backdrop-filter:blur(8px);border-radius:var(--radius);padding:14px;border:1px solid rgba(255,255,255,0.6)}
+.task-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.task-badge{background:#c5e235;color:#1a3a00;border-radius:99px;font-size:9px;font-weight:700;padding:1px 7px}
+.task-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.task-item:last-child{border-bottom:none}
+.task-check{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s}
+.task-check.done{background:var(--green-dark);border-color:var(--green-dark);color:#fff;font-size:9px}
+.task-text{font-size:11px;color:var(--text);line-height:1.3}
+.task-date{font-size:9px;color:var(--text3)}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.5s ease both}
+.fade-in-1{animation:fadeIn 0.5s 0.1s ease both;opacity:0}
+.fade-in-2{animation:fadeIn 0.5s 0.2s ease both;opacity:0}
+.fade-in-3{animation:fadeIn 0.5s 0.3s ease both;opacity:0}
+.fade-in-4{animation:fadeIn 0.5s 0.4s ease both;opacity:0}
+.fade-in-5{animation:fadeIn 0.5s 0.5s ease both;opacity:0}
+
+/* PAGE VIEWS */
+.page{display:none}
+.page.active{display:flex;flex-direction:column;height:100%}
+
+/* DASHBOARD PAGE */
+.dash-page{padding:20px;flex:1;overflow-y:auto;background:var(--bg)}
+.dash-page::-webkit-scrollbar{width:4px}
+.dash-page::-webkit-scrollbar-track{background:transparent}
+.dash-page::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:99px}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.dash-card{background:var(--card-bg);border-radius:var(--radius);padding:16px;border:1px solid var(--border)}
+.dash-card.wide{grid-column:span 2}
+.dash-card.full{grid-column:span 3}
+.dc-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.dc-val{font-size:26px;font-weight:800;color:var(--text);line-height:1}
+.dc-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.dc-change{font-size:11px;font-weight:600;margin-top:4px}
+.dc-change.up{color:#3d6b27}
+.dc-change.down{color:#c0392b}
+.mini-bar-wrap{margin-top:10px;display:flex;align-items:flex-end;gap:3px;height:36px}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;background:var(--green-light);transition:height 0.8s ease}
+.mini-bar.hi{background:var(--green)}
+
+/* RECHARTS-LIKE CHART with canvas */
+.chart-area{height:140px;position:relative;margin-top:8px}
+
+/* VARIETIES TABLE */
+.vtable{width:100%;border-collapse:collapse;font-size:12px}
+.vtable th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.vtable td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,0.04);color:var(--text)}
+.vtable tr:last-child td{border-bottom:none}
+.vtable tr:hover td{background:rgba(0,0,0,0.02)}
+.match-bar{height:4px;background:#e8e4dc;border-radius:99px;width:80px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+.match-fill{height:100%;border-radius:99px;background:var(--green)}
+.crop-tag{background:#eaf3de;color:#2d5a10;border-radius:99px;padding:2px 8px;font-size:10px;font-weight:600}
+.action-btn{background:var(--green-dark);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.18s}
+.action-btn:hover{background:var(--green)}
+
+/* MODAL OVERLAY */
+.modal-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.4);z-index:50;align-items:center;justify-content:center;border-radius:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card-bg);border-radius:var(--radius);padding:24px;width:360px;border:1px solid var(--border)}
+.modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--text3);margin-bottom:18px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block}
+.form-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:white;color:var(--text);outline:none;transition:border 0.18s;font-family:'Inter',sans-serif}
+.form-input:focus{border-color:var(--green)}
+.form-select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:white;color:var(--text);outline:none;font-family:'Inter',sans-serif;cursor:pointer}
+.modal-btns{display:flex;gap:10px;margin-top:20px}
+.btn-cancel{flex:1;padding:9px;border:1px solid var(--border);border-radius:var(--radius-sm);background:white;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer}
+.btn-submit{flex:1;padding:9px;border:none;border-radius:var(--radius-sm);background:var(--green-dark);font-size:13px;font-weight:600;color:white;cursor:pointer;transition:all 0.18s}
+.btn-submit:hover{background:var(--green)}
+
+/* TOAST */
+.toast{position:absolute;top:16px;right:16px;background:var(--green-dark);color:#fff;border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;font-weight:600;z-index:100;display:none;align-items:center;gap:8px}
+.toast.show{display:flex;animation:fadeIn 0.3s ease}
+
+/* PESTS PAGE */
+.pest-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pest-card{background:var(--card-bg);border-radius:var(--radius);padding:16px;border:1px solid var(--border);cursor:pointer;transition:all 0.18s}
+.pest-card:hover{transform:translateY(-2px);border-color:var(--green)}
+.pest-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pest-name{font-size:14px;font-weight:700;color:var(--text)}
+.pest-risk{padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700}
+.risk-high{background:#fde8e8;color:#a00}
+.risk-med{background:#fef3cd;color:#7a5200}
+.risk-low{background:#eaf3de;color:#2d5a10}
+.pest-desc{font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:10px}
+.pest-treatment{font-size:11px;font-weight:600;color:var(--green-dark)}
+.upload-area{background:var(--card-bg);border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all 0.18s;margin-bottom:14px}
+.upload-area:hover{border-color:var(--green);background:rgba(61,107,39,0.04)}
+.upload-icon{font-size:32px;margin-bottom:8px}
+.upload-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.upload-sub{font-size:12px;color:var(--text3)}
+
+/* REPORTS PAGE */
+.reports-list{display:flex;flex-direction:column;gap:10px}
+.report-item{background:var(--card-bg);border-radius:var(--radius);padding:14px 18px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.18s}
+.report-item:hover{border-color:var(--green);transform:translateX(2px)}
+.ri-left{display:flex;align-items:center;gap:12px}
+.ri-icon{width:38px;height:38px;border-radius:var(--radius-sm);background:rgba(61,107,39,0.1);display:flex;align-items:center;justify-content:center;font-size:18px}
+.ri-name{font-size:13px;font-weight:600;color:var(--text)}
+.ri-date{font-size:11px;color:var(--text3);margin-top:1px}
+.dl-btn{background:var(--green-dark);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer}
+</style>
+
+<div class="app" style="position:relative">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 3C8 3 5 6 5 9.5c0 2 1 3.8 2.5 5L12 21l4.5-6.5C18 13.3 19 11.5 19 9.5 19 6 16 3 12 3zm0 9a3 3 0 100-6 3 3 0 000 6z"/></svg>
+    </div>
+    <span class="logo-text">SmartGrow</span>
+  </div>
+  <div class="nav-section">
+    <div class="nav-item" onclick="showPage('dashboard',this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Dashboard</div>
+    <div class="nav-item active" onclick="showPage('fields',this)"><i class="ti ti-map-2" aria-hidden="true"></i> Fields</div>
+    <div class="nav-item" onclick="showPage('irrigation',this)"><i class="ti ti-droplet" aria-hidden="true"></i> Irrigation</div>
+    <div class="nav-item" onclick="showPage('climate',this)"><i class="ti ti-cloud" aria-hidden="true"></i> Climate</div>
+    <div class="nav-item" onclick="showPage('pests',this)"><i class="ti ti-bug" aria-hidden="true"></i> Pests</div>
+    <div class="nav-item" onclick="showPage('inventory',this)"><i class="ti ti-package" aria-hidden="true"></i> Inventory</div>
+    <div class="nav-item" onclick="showPage('reports',this)"><i class="ti ti-file-analytics" aria-hidden="true"></i> Reports</div>
+    <div class="nav-item"><i class="ti ti-help-circle" aria-hidden="true"></i> Help</div>
+  </div>
+  <div class="nav-bottom">
+    <div class="nav-item"><i class="ti ti-bell" aria-hidden="true"></i> Notifications <span class="badge">2</span></div>
+    <div class="nav-item"><i class="ti ti-settings" aria-hidden="true"></i> Settings</div>
+    <div class="user-item">
+      <div class="user-av">AJ</div>
+      <div>
+        <div class="user-name">Alex Jackson</div>
+        <div style="font-size:10px;color:var(--text3)">Agronomist</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" style="position:relative">
+
+  <!-- FIELDS PAGE (default) -->
+  <div class="page active" id="page-fields">
+    <div class="topbar fade-in">
+      <div class="field-title">
+        <button class="back-btn" aria-label="Back"><i class="ti ti-arrow-left" style="font-size:14px"></i></button>
+        <div>
+          <div class="field-name">Field 01</div>
+          <div class="field-coords">12.3456°S, 76.5432°W · Mashonaland East</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <select class="form-select" style="width:auto;padding:6px 12px;font-size:12px;background:rgba(255,255,255,0.7);border:1px solid var(--border)" id="fieldSelect" onchange="changeField(this.value)">
+          <option>Field 01 — 125ha</option>
+          <option>Field 02 — 80ha</option>
+          <option>Field 03 — 210ha</option>
+        </select>
+        <button class="tab-btn active">Overview</button>
+        <button class="tab-btn">Analytics</button>
+        <button class="tab-btn" onclick="document.getElementById('addCropModal').classList.add('open')">+ Add Crop</button>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-area">
+      <div class="map-bg">
+        <div class="field-patch"><div class="field-dot"></div></div>
+        <div class="map-road"></div>
+        <div class="map-road2"></div>
+        <div class="map-contour">
+          <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="300" cy="200" rx="250" ry="160" fill="none" stroke="white" stroke-width="1"/>
+            <ellipse cx="300" cy="200" rx="200" ry="120" fill="none" stroke="white" stroke-width="1"/>
+            <ellipse cx="300" cy="200" rx="150" ry="85" fill="none" stroke="white" stroke-width="1"/>
+            <ellipse cx="300" cy="200" rx="100" ry="55" fill="none" stroke="white" stroke-width="1"/>
+            <ellipse cx="300" cy="200" rx="55" ry="30" fill="none" stroke="white" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Overlay stats top -->
+      <div class="map-overlay">
+        <div class="top-stats fade-in-1">
+          <div class="stat-card">
+            <div class="stat-card-label"><span>🌱</span> Planted area</div>
+            <div class="stat-card-val" id="plantedArea">125<span style="font-size:14px;font-weight:500">ha</span></div>
+            <div class="stat-card-sub">Active season</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label"><span>📡</span> Current NDVI</div>
+            <div class="stat-card-val" id="ndviVal">0.62</div>
+            <div class="stat-card-sub" id="ndviStatus">Good vegetation health</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label"><span>💧</span> Humidity</div>
+            <div class="stat-card-val" id="humidityVal">19<span style="font-size:14px;font-weight:500">%</span></div>
+            <div class="stat-card-sub" id="humidityStatus">Low — irrigation advised</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label"><span>🌡</span> Temperature</div>
+            <div class="stat-card-val">28<span style="font-size:14px;font-weight:500">°C</span></div>
+            <div class="stat-card-sub">Optimal range</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zone + Crops card -->
+      <div class="zone-card fade-in-2">
+        <div class="zone-badge">Optimal zone</div>
+        <div class="zone-inner">
+          <div>
+            <div class="zone-pct" id="zonePct">64<span>%</span></div>
+            <div class="zone-sub">For cultivation</div>
+          </div>
+          <div class="crop-list">
+            <div class="crop-item" onclick="selectCrop('Corn')">
+              <span class="crop-emoji">🌽</span>
+              <div><div class="crop-name">Corn</div><div class="crop-yield" id="cornYield">375 t</div></div>
+            </div>
+            <div class="crop-item" onclick="selectCrop('Potato')">
+              <span class="crop-emoji">🥔</span>
+              <div><div class="crop-name">Potato</div><div class="crop-yield" id="potatoYield">750 t</div></div>
+            </div>
+            <div class="crop-item" onclick="selectCrop('Carrot')">
+              <span class="crop-emoji">🥕</span>
+              <div><div class="crop-name">Carrot</div><div class="crop-yield" id="carrotYield">1,000 t</div></div>
+            </div>
+            <button class="add-crop-btn" onclick="document.getElementById('addCropModal').classList.add('open')">
+              <i class="ti ti-plus" style="font-size:13px"></i> Add Crop
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task card -->
+      <div class="task-card fade-in-3">
+        <div class="task-title">Upcoming tasks <span class="task-badge">4</span></div>
+        <div class="task-item">
+          <div class="task-check done" onclick="toggleTask(this)">✓</div>
+          <div><div class="task-text">Apply NPK fertilizer</div><div class="task-date">Completed · Nov 12</div></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div><div class="task-text">Irrigation — Zone B</div><div class="task-date">Due · Nov 18</div></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div><div class="task-text">FAW scouting</div><div class="task-date">Due · Nov 20</div></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check" onclick="toggleTask(this)"></div>
+          <div><div class="task-text">Harvest window opens</div><div class="task-date">Est. · Mar 15</div></div>
+        </div>
+      </div>
+
+      <!-- Bottom panels -->
+      <div class="bottom-panels fade-in-4">
+        <div class="npk-card">
+          <div class="npk-header">
+            <div>
+              <div class="npk-title">NPK Levels</div>
+              <div class="npk-sub">This week · Field 01</div>
+            </div>
+            <div class="tab-pills">
+              <button class="pill on" onclick="setNPKTab('analysis',this)">Analysis</button>
+              <button class="pill off" onclick="setNPKTab('record',this)">Record</button>
+            </div>
+          </div>
+          <div id="npkView">
+            <div class="npk-row">
+              <div class="npk-row-top"><span class="npk-label">Nitrogen (N)</span><span class="npk-val" id="nVal">48/100</span></div>
+              <div class="npk-track"><div class="npk-fill n" id="nBar" style="width:0"></div></div>
+            </div>
+            <div class="npk-row">
+              <div class="npk-row-top"><span class="npk-label">Phosphorus (P)</span><span class="npk-val" id="pVal">40/100</span></div>
+              <div class="npk-track"><div class="npk-fill p" id="pBar" style="width:0"></div></div>
+            </div>
+            <div class="npk-row">
+              <div class="npk-row-top"><span class="npk-label">Potassium (K)</span><span class="npk-val" id="kVal">55/100</span></div>
+              <div class="npk-track"><div class="npk-fill k" id="kBar" style="width:0"></div></div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--text3);padding:8px;background:rgba(197,226,53,0.1);border-radius:6px;border:1px solid rgba(197,226,53,0.3)">
+              💡 Recommendation: Increase Nitrogen application by <strong style="color:var(--green-dark)">12 kg/ha</strong> before next irrigation cycle.
+            </div>
+          </div>
+        </div>
+
+        <div class="lai-card">
+          <div class="lai-title">Leaf area index</div>
+          <div class="lai-val">~0.7</div>
+          <div class="lai-sub">Week 01 · Early growth</div>
+          <div class="lai-chart" id="laiChart">
+            <div class="lai-bar hi" style="height:30%"></div>
+            <div class="lai-bar" style="height:45%"></div>
+            <div class="lai-bar" style="height:60%"></div>
+            <div class="lai-bar hi" style="height:75%"></div>
+            <div class="lai-bar" style="height:55%"></div>
+            <div class="lai-bar hi" style="height:90%"></div>
+            <div class="lai-bar" style="height:70%"></div>
+          </div>
+          <div class="lai-week">
+            <span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span><span>W6</span><span>W7</span>
+          </div>
+        </div>
+
+        <div class="weather-card">
+          <div class="weather-title">Weather · Harare</div>
+          <div class="weather-main">
+            <div class="weather-temp">28°</div>
+            <div class="weather-icon">⛅</div>
+          </div>
+          <div class="weather-days">
+            <div class="wd"><span class="wd-label">Mon</span><span class="wd-icon">☀️</span><div class="wd-bar"><div class="wd-fill" style="width:5%"></div></div><span class="wd-mm">0mm</span></div>
+            <div class="wd"><span class="wd-label">Tue</span><span class="wd-icon">⛅</span><div class="wd-bar"><div class="wd-fill" style="width:30%"></div></div><span class="wd-mm">4mm</span></div>
+            <div class="wd"><span class="wd-label">Wed</span><span class="wd-icon">🌧</span><div class="wd-bar"><div class="wd-fill" style="width:90%"></div></div><span class="wd-mm">18mm</span></div>
+            <div class="wd"><span class="wd-label">Thu</span><span class="wd-icon">🌦</span><div class="wd-bar"><div class="wd-fill" style="width:50%"></div></div><span class="wd-mm">8mm</span></div>
+            <div class="wd"><span class="wd-label">Fri</span><span class="wd-icon">☀️</span><div class="wd-bar"><div class="wd-fill" style="width:2%"></div></div><span class="wd-mm">0mm</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page" id="page-dashboard">
+    <div class="topbar">
+      <div><div class="field-name">Dashboard</div><div class="field-coords">Season 2024/25 · All fields</div></div>
+      <div class="topbar-right"><button class="tab-btn active">Overview</button><button class="tab-btn">Season</button></div>
+    </div>
+    <div class="dash-page fade-in">
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dc-label">Total farmland</div>
+          <div class="dc-val">415<span style="font-size:16px;font-weight:500">ha</span></div>
+          <div class="dc-sub">3 active fields</div>
+          <div class="dc-change up">↑ 80ha from last season</div>
+        </div>
+        <div class="dash-card">
+          <div class="dc-label">Avg NDVI</div>
+          <div class="dc-val">0.68</div>
+          <div class="dc-sub">Good crop health</div>
+          <div class="dc-change up">↑ 0.08 vs last month</div>
+        </div>
+        <div class="dash-card">
+          <div class="dc-label">Pest alerts</div>
+          <div class="dc-val">2</div>
+          <div class="dc-sub">FAW · Low risk</div>
+          <div class="dc-change down">↑ 1 new this week</div>
+        </div>
+        <div class="dash-card wide">
+          <div class="dc-label">Yield forecast (t/ha)</div>
+          <div class="mini-bar-wrap" id="dashBars">
+            <div class="mini-bar" style="height:0" data-h="65%"></div>
+            <div class="mini-bar hi" style="height:0" data-h="80%"></div>
+            <div class="mini-bar" style="height:0" data-h="45%"></div>
+            <div class="mini-bar hi" style="height:0" data-h="90%"></div>
+            <div class="mini-bar" style="height:0" data-h="60%"></div>
+            <div class="mini-bar hi" style="height:0" data-h="75%"></div>
+            <div class="mini-bar" style="height:0" data-h="55%"></div>
+            <div class="mini-bar hi" style="height:0" data-h="85%"></div>
+            <div class="mini-bar" style="height:0" data-h="70%"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px">
+            <span style="font-size:10px;color:var(--text3)">Mar</span>
+            <span style="font-size:10px;color:var(--text3)">Apr</span>
+            <span style="font-size:10px;color:var(--text3)">May</span>
+            <span style="font-size:10px;color:var(--text3)">Jun</span>
+            <span style="font-size:10px;color:var(--text3)">Jul</span>
+            <span style="font-size:10px;color:var(--text3)">Aug</span>
+            <span style="font-size:10px;color:var(--text3)">Sep</span>
+            <span style="font-size:10px;color:var(--text3)">Oct</span>
+            <span style="font-size:10px;color:var(--text3)">Nov</span>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dc-label">Rainfall (mm)</div>
+          <div class="dc-val">142</div>
+          <div class="dc-sub">Above average season</div>
+          <div class="dc-change up">↑ 28mm vs avg</div>
+        </div>
+        <div class="dash-card full">
+          <div class="dc-label" style="margin-bottom:12px">Top seed variety matches — all fields</div>
+          <table class="vtable">
+            <thead><tr><th>Variety</th><th>Crop</th><th>Yield Potential</th><th>Match Score</th><th>Maturity</th><th></th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">SC403</td><td><span class="crop-tag">Maize</span></td><td>8.2 t/ha</td><td><div class="match-bar"><div class="match-fill" style="width:96%"></div></div>96%</td><td>110 days</td><td><button class="action-btn">Select</button></td></tr>
+              <tr><td style="font-weight:600">SC627</td><td><span class="crop-tag">Maize</span></td><td>9.1 t/ha</td><td><div class="match-bar"><div class="match-fill" style="width:91%"></div></div>91%</td><td>130 days</td><td><button class="action-btn">Select</button></td></tr>
+              <tr><td style="font-weight:600">SB101</td><td><span class="crop-tag" style="background:#e8f4fd;color:#0c4a7a">Soybean</span></td><td>3.8 t/ha</td><td><div class="match-bar"><div class="match-fill" style="width:88%"></div></div>88%</td><td>95 days</td><td><button class="action-btn">Select</button></td></tr>
+              <tr><td style="font-weight:600">WH300</td><td><span class="crop-tag" style="background:#fdf3dc;color:#6b3e00">Wheat</span></td><td>6.4 t/ha</td><td><div class="match-bar"><div class="match-fill" style="width:83%"></div></div>83%</td><td>120 days</td><td><button class="action-btn">Select</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTS PAGE -->
+  <div class="page" id="page-pests">
+    <div class="topbar">
+      <div><div class="field-name">Pest & Disease</div><div class="field-coords">Detection & treatment management</div></div>
+      <div class="topbar-right"><button class="tab-btn active">Active alerts</button><button class="tab-btn">History</button></div>
+    </div>
+    <div class="dash-page fade-in">
+      <div class="upload-area" onclick="showToast('AI scan initiated — upload your crop image to detect pests')">
+        <div class="upload-icon">📷</div>
+        <div class="upload-title">Upload crop photo for AI detection</div>
+        <div class="upload-sub">Supports JPG, PNG · Identifies 40+ pests and diseases instantly</div>
+      </div>
+      <div class="pest-grid">
+        <div class="pest-card"><div class="pest-header"><span class="pest-name">Fall Armyworm</span><span class="pest-risk risk-med">Medium risk</span></div><div class="pest-desc">FAW detected 2km radius. Monitor leaf damage patterns on maize crops. Check for egg masses on leaf undersides.</div><div class="pest-treatment">Treatment: Emamectin Benzoate 1.9 EC — Apply 300ml/ha</div></div>
+        <div class="pest-card"><div class="pest-header"><span class="pest-name">Maize Leaf Rust</span><span class="pest-risk risk-low">Low risk</span></div><div class="pest-desc">Early rust pustules on lower leaves. Good air circulation in field. Continue monitoring during humid conditions.</div><div class="pest-treatment">Treatment: Propiconazole 250EC — Apply if coverage exceeds 5%</div></div>
+        <div class="pest-card"><div class="pest-header"><span class="pest-name">Aphids</span><span class="pest-risk risk-low">Low risk</span></div><div class="pest-desc">Small colonies on shoot tips. Natural predators present. Threshold not reached for chemical intervention.</div><div class="pest-treatment">Monitor: Check weekly. Apply if colony &gt;20 per leaf</div></div>
+        <div class="pest-card"><div class="pest-header"><span class="pest-name">Gray Leaf Spot</span><span class="pest-risk risk-high">High risk</span></div><div class="pest-desc">Active blight spreading across Field 03. Rectangular tan lesions visible. Immediate treatment recommended.</div><div class="pest-treatment">Urgent: Apply Azoxystrobin 250SC within 48 hours</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IRRIGATION PAGE -->
+  <div class="page" id="page-irrigation">
+    <div class="topbar"><div><div class="field-name">Irrigation</div><div class="field-coords">Zone management & schedule</div></div></div>
+    <div class="dash-page fade-in">
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dc-label">Water used today</div><div class="dc-val">2,840<span style="font-size:14px">L</span></div><div class="dc-change up">↓ 12% vs yesterday</div></div>
+        <div class="dash-card"><div class="dc-label">Active zones</div><div class="dc-val">3 / 6</div><div class="dc-sub">3 zones idle</div></div>
+        <div class="dash-card"><div class="dc-label">Soil moisture</div><div class="dc-val">42<span style="font-size:14px">%</span></div><div class="dc-change down">Below 50% threshold</div></div>
+        <div class="dash-card full">
+          <div class="dc-label" style="margin-bottom:14px">Irrigation zones</div>
+          <table class="vtable">
+            <thead><tr><th>Zone</th><th>Crop</th><th>Soil Moisture</th><th>Last Irrigated</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Zone A</td><td>Maize</td><td>48%</td><td>Nov 15</td><td><span class="pest-risk risk-low">Active</span></td><td><button class="action-btn">Stop</button></td></tr>
+              <tr><td style="font-weight:600">Zone B</td><td>Soybean</td><td>31%</td><td>Nov 12</td><td><span class="pest-risk risk-high">Needed</span></td><td><button class="action-btn">Start</button></td></tr>
+              <tr><td style="font-weight:600">Zone C</td><td>Wheat</td><td>62%</td><td>Nov 16</td><td><span class="pest-risk risk-low">Good</span></td><td><button class="action-btn">Schedule</button></td></tr>
+              <tr><td style="font-weight:600">Zone D</td><td>Groundnut</td><td>28%</td><td>Nov 10</td><td><span class="pest-risk risk-high">Critical</span></td><td><button class="action-btn">Start</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIMATE PAGE -->
+  <div class="page" id="page-climate">
+    <div class="topbar"><div><div class="field-name">Climate</div><div class="field-coords">Seasonal weather intelligence</div></div></div>
+    <div class="dash-page fade-in">
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dc-label">Season rainfall</div><div class="dc-val">142<span style="font-size:14px">mm</span></div><div class="dc-change up">↑ 28mm vs avg</div></div>
+        <div class="dash-card"><div class="dc-label">Avg temperature</div><div class="dc-val">26<span style="font-size:14px">°C</span></div><div class="dc-sub">Optimal growing</div></div>
+        <div class="dash-card"><div class="dc-label">Drought risk</div><div class="dc-val">Low</div><div class="dc-change up">No alerts active</div></div>
+        <div class="dash-card full"><div class="dc-label" style="margin-bottom:12px">14-day forecast</div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
+            ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun'].slice(0,7).map((d,i)=>
+              `<div style="text-align:center;background:#f0ede6;border-radius:10px;padding:10px 6px">
+                <div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:6px">${d}</div>
+                <div style="font-size:20px;margin-bottom:4px">${['☀️','⛅','🌧','🌦','☀️','☀️','⛅'][i]}</div>
+                <div style="font-size:13px;font-weight:700;color:var(--text)">${[29,26,22,24,31,30,28][i]}°</div>
+                <div style="font-size:10px;color:#185fa5">${[0,4,18,8,0,0,3][i]}mm</div>
+              </div>`
+            ).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTORY PAGE -->
+  <div class="page" id="page-inventory">
+    <div class="topbar"><div><div class="field-name">Inventory</div><div class="field-coords">Seeds, fertilizers & chemicals</div></div><div class="topbar-right"><button class="tab-btn active" onclick="showToast('Add stock form opened')">+ Add Stock</button></div></div>
+    <div class="dash-page fade-in">
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dc-label">Total SKUs</div><div class="dc-val">24</div><div class="dc-sub">Across 3 categories</div></div>
+        <div class="dash-card"><div class="dc-label">Low stock items</div><div class="dc-val">3</div><div class="dc-change down">Reorder needed</div></div>
+        <div class="dash-card"><div class="dc-label">Stock value</div><div class="dc-val">$12,480</div><div class="dc-change up">↑ $1,200 this month</div></div>
+        <div class="dash-card full"><div class="dc-label" style="margin-bottom:12px">Stock levels</div>
+          <table class="vtable">
+            <thead><tr><th>Item</th><th>Category</th><th>Stock</th><th>Unit</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">SC403 Seed</td><td><span class="crop-tag">Seeds</span></td><td>450</td><td>kg</td><td><span class="pest-risk risk-low">In stock</span></td><td><button class="action-btn">Order</button></td></tr>
+              <tr><td style="font-weight:600">NPK 15-15-15</td><td><span class="crop-tag" style="background:#fdf3dc;color:#6b3e00">Fertilizer</span></td><td>80</td><td>bags</td><td><span class="pest-risk risk-med">Low</span></td><td><button class="action-btn">Reorder</button></td></tr>
+              <tr><td style="font-weight:600">Emamectin 1.9EC</td><td><span class="crop-tag" style="background:#fde8e8;color:#a00">Chemical</span></td><td>12</td><td>L</td><td><span class="pest-risk risk-high">Critical</span></td><td><button class="action-btn">Order</button></td></tr>
+              <tr><td style="font-weight:600">Urea 46%</td><td><span class="crop-tag" style="background:#fdf3dc;color:#6b3e00">Fertilizer</span></td><td>200</td><td>bags</td><td><span class="pest-risk risk-low">In stock</span></td><td><button class="action-btn">Order</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS PAGE -->
+  <div class="page" id="page-reports">
+    <div class="topbar"><div><div class="field-name">Reports</div><div class="field-coords">Season analytics & export</div></div><div class="topbar-right"><button class="tab-btn active" onclick="showToast('Generating new report...')">Generate report</button></div></div>
+    <div class="dash-page fade-in">
+      <div class="reports-list">
+        <div class="report-item"><div class="ri-left"><div class="ri-icon">📊</div><div><div class="ri-name">Season 2024/25 Yield Report</div><div class="ri-date">Generated Nov 14, 2024</div></div></div><button class="dl-btn" onclick="showToast('Downloading: Yield Report 2024.pdf')">Download PDF</button></div>
+        <div class="report-item"><div class="ri-left"><div class="ri-icon">🌱</div><div><div class="ri-name">Seed Performance Analysis</div><div class="ri-date">Generated Nov 10, 2024</div></div></div><button class="dl-btn" onclick="showToast('Downloading: Seed Performance.pdf')">Download PDF</button></div>
+        <div class="report-item"><div class="ri-left"><div class="ri-icon">💧</div><div><div class="ri-name">Irrigation Efficiency Report</div><div class="ri-date">Generated Oct 28, 2024</div></div></div><button class="dl-btn" onclick="showToast('Downloading: Irrigation Report.pdf')">Download PDF</button></div>
+        <div class="report-item"><div class="ri-left"><div class="ri-icon">🐛</div><div><div class="ri-name">Pest Incident Log — Q3</div><div class="ri-date">Generated Oct 1, 2024</div></div></div><button class="dl-btn" onclick="showToast('Downloading: Pest Log Q3.pdf')">Download PDF</button></div>
+        <div class="report-item"><div class="ri-left"><div class="ri-icon">🌤</div><div><div class="ri-name">Climate & Rainfall Summary</div><div class="ri-date">Generated Sep 15, 2024</div></div></div><button class="dl-btn" onclick="showToast('Downloading: Climate Summary.pdf')">Download PDF</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD CROP MODAL -->
+  <div class="modal-overlay" id="addCropModal">
+    <div class="modal">
+      <div class="modal-title">Add crop to Field 01</div>
+      <div class="modal-sub">Configure crop variety and planting details</div>
+      <div class="form-group">
+        <label class="form-label">Crop type</label>
+        <select class="form-select"><option>Maize</option><option>Soybean</option><option>Wheat</option><option>Groundnut</option><option>Sorghum</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Variety</label>
+        <select class="form-select"><option>SC403 Premium</option><option>SC627 Long Season</option><option>PAN 413</option><option>PAN 6777</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Planting date</label>
+        <input type="date" class="form-input" value="2024-11-20"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Area (ha)</label>
+        <input type="number" class="form-input" placeholder="e.g. 45" value="45"/>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="document.getElementById('addCropModal').classList.remove('open')">Cancel</button>
+        <button class="btn-submit" onclick="addCrop()">Add Crop</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><i class="ti ti-check" style="font-size:15px"></i> <span id="toastMsg"></span></div>
+
+</div>
+</div>
+
+<script>
+(() => {
+  const API_BASE_URL = 'http://localhost:5000/api';
+  const state = {
+    fields: [],
+    crops: [],
+    weather: null,
+    pests: [],
+    dashboard: null,
+    irrigation: null,
+    notifications: [],
+    npkByField: new Map(),
+    laiByField: new Map(),
+    activeFieldId: null
+  };
+
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+  async function fetchJSON(path, options) {
+    const response = await fetch(`${API_BASE_URL}${path}`, options);
+    if (!response.ok) throw new Error(`${path} failed with ${response.status}`);
+    return response.json();
+  }
+
+  function fieldLabel(field) {
+    return `${field.name} — ${field.hectares}ha`;
+  }
+
+  function resolveField(value) {
+    return state.fields.find(field => field.id === value || fieldLabel(field) === value || field.name === value) || null;
+  }
+
+  function showToast(message) {
+    const toast = $('#toast');
+    const toastMsg = $('#toastMsg');
+    if (!toast || !toastMsg) return;
+    toastMsg.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
+  function animateBar(id, pct) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.width = '0';
+    requestAnimationFrame(() => {
+      el.style.width = `${pct}%`;
+    });
+  }
+
+  function animateYieldBars() {
+    $$('#dashBars .mini-bar').forEach(bar => {
+      bar.style.height = bar.dataset.h || '50%';
+    });
+  }
+
+  function updateFieldView(field) {
+    if (!field) return;
+    state.activeFieldId = field.id;
+
+    const npk = state.npkByField.get(field.id);
+    const lai = state.laiByField.get(field.id);
+    const fieldCrops = state.crops.filter(crop => crop.fieldId === field.id);
+
+    const plantedArea = $('#plantedArea');
+    const ndviVal = $('#ndviVal');
+    const humidityVal = $('#humidityVal');
+    const zonePct = $('#zonePct');
+    const cornYield = $('#cornYield');
+    const potatoYield = $('#potatoYield');
+    const carrotYield = $('#carrotYield');
+    const nVal = $('#nVal');
+    const pVal = $('#pVal');
+    const kVal = $('#kVal');
+    const nBar = $('#nBar');
+    const pBar = $('#pBar');
+    const kBar = $('#kBar');
+
+    if (plantedArea) plantedArea.innerHTML = `${field.hectares}<span style="font-size:14px;font-weight:500">ha</span>`;
+    if (ndviVal) ndviVal.textContent = field.ndvi.toFixed(2);
+    if (humidityVal) humidityVal.innerHTML = `${field.humidity}<span style="font-size:14px;font-weight:500">%</span>`;
+    if (zonePct) zonePct.innerHTML = `${field.optimalZone}<span>%</span>`;
+
+    const totals = fieldCrops.reduce((acc, crop) => {
+      const yieldValue = Number(String(crop.yield || '0').replace(/[^\d.]/g, '')) || 0;
+      const name = crop.name.toLowerCase();
+      if (name.includes('corn') || name.includes('maize')) acc.corn += yieldValue;
+      if (name.includes('potato')) acc.potato += yieldValue;
+      if (name.includes('carrot')) acc.carrot += yieldValue;
+      return acc;
+    }, { corn: 0, potato: 0, carrot: 0 });
+
+    if (cornYield) cornYield.textContent = `${totals.corn || 0} t`;
+    if (potatoYield) potatoYield.textContent = `${totals.potato || 0} t`;
+    if (carrotYield) carrotYield.textContent = `${totals.carrot || 0} t`;
+
+    if (npk) {
+      if (nVal) nVal.textContent = `${npk.nitrogen.score}/${npk.nitrogen.max}`;
+      if (pVal) pVal.textContent = `${npk.phosphorus.score}/${npk.phosphorus.max}`;
+      if (kVal) kVal.textContent = `${npk.potassium.score}/${npk.potassium.max}`;
+      if (nBar) nBar.style.width = `${npk.nitrogen.score}%`;
+      if (pBar) pBar.style.width = `${npk.phosphorus.score}%`;
+      if (kBar) kBar.style.width = `${npk.potassium.score}%`;
+
+      const recommendation = $('#fieldNPK div[style*="background: rgba(197,226,53,0.1)"]');
+      if (recommendation) {
+        recommendation.innerHTML = `💡 Recommendation: ${npk.phosphorus.recommendation.replace('Apply DAP within 5 days', 'Apply DAP within 5 days')}`;
+      }
+    }
+
+    const laiValue = $('#page-fields .lai-card .lai-val');
+    const laiSub = $('#page-fields .lai-card .lai-sub');
+    if (lai && laiValue) {
+      laiValue.textContent = `~${lai.value}`;
+      if (laiSub) laiSub.textContent = `Week ${lai.week} · ${lai.status}`;
+    }
+
+    const select = $('#fieldSelect');
+    if (select && select.value !== field.id) {
+      select.value = field.id;
+    }
+  }
+
+  function updateDashboard() {
+    const dashboardPage = $('#page-dashboard');
+    if (!dashboardPage || !state.dashboard) return;
+    const cards = $$('.dash-card', dashboardPage);
+    const updates = [
+      { label: 'Total farmland', value: `${state.dashboard.totalHectares}<span style="font-size:16px;font-weight:500">ha</span>`, sub: `${state.fields.length} active fields`, change: `↑ ${state.dashboard.totalHectares - 207}ha from last season` },
+      { label: 'Avg NDVI', value: state.dashboard.avgNDVI.toFixed(2), sub: 'Good crop health', change: `↑ ${(state.dashboard.avgNDVI - 0.6).toFixed(2)} vs last month` },
+      { label: 'Pest alerts', value: `${state.dashboard.activeAlerts}`, sub: 'FAW · Low risk', change: `↑ ${Math.max(state.dashboard.activeAlerts - 1, 0)} new this week` },
+      { label: 'Rainfall (mm)', value: state.weather?.current?.rainfall || 0, sub: 'Above average season', change: '↑ 28mm vs avg' }
+    ];
+
+    updates.forEach((item, index) => {
+      const card = cards[index];
+      if (!card) return;
+      const value = $('.dc-val', card);
+      const sub = $('.dc-sub', card);
+      const change = $('.dc-change', card);
+      const label = $('.dc-label', card);
+      if (label) label.textContent = item.label;
+      if (value) value.innerHTML = item.value;
+      if (sub) sub.textContent = item.sub;
+      if (change) change.textContent = item.change;
+    });
+
+    const bars = $$('#dashBars .mini-bar');
+    bars.forEach((bar, index) => {
+      const heights = ['65%', '80%', '45%', '90%', '60%', '75%', '55%', '85%', '70%'];
+      if (heights[index]) bar.dataset.h = heights[index];
+    });
+    animateYieldBars();
+
+    const rows = $$('.vtable tbody tr', dashboardPage);
+    const matches = [
+      ['SC403', 'Maize', '8.2 t/ha', '96%', '110 days'],
+      ['SC627', 'Maize', '9.1 t/ha', '91%', '130 days'],
+      ['SB101', 'Soybean', '3.8 t/ha', '88%', '95 days'],
+      ['WH300', 'Wheat', '6.4 t/ha', '83%', '120 days']
+    ];
+
+    rows.forEach((row, index) => {
+      const cells = $$('td', row);
+      const spec = matches[index];
+      if (!cells.length || !spec) return;
+      cells[0].textContent = spec[0];
+      cells[1].innerHTML = `<span class="crop-tag">${spec[1]}</span>`;
+      cells[2].textContent = spec[2];
+      cells[3].innerHTML = `<div class="match-bar"><div class="match-fill" style="width:${spec[3]}"></div></div>${spec[3]}`;
+      cells[4].textContent = spec[4];
+    });
+  }
+
+  function updateClimate() {
+    const climatePage = $('#page-climate');
+    if (!climatePage || !state.weather) return;
+    const cards = $$('.dash-card', climatePage);
+    const values = [
+      { value: `${state.weather.current.rainfall}<span style="font-size:14px">mm</span>`, change: '↑ 28mm vs avg' },
+      { value: `${state.weather.current.temperature}<span style="font-size:14px">°C</span>`, sub: 'Optimal growing' },
+      { value: 'Low', change: 'No alerts active' }
+    ];
+
+    values.forEach((item, index) => {
+      const card = cards[index];
+      if (!card) return;
+      const value = $('.dc-val', card);
+      const sub = $('.dc-sub', card);
+      const change = $('.dc-change', card);
+      if (item.value && value) value.innerHTML = item.value;
+      if (item.sub && sub) sub.textContent = item.sub;
+      if (item.change && change) change.textContent = item.change;
+    });
+
+    const grid = $('.dash-card.full div[style*="grid-template-columns"]', climatePage);
+    if (grid && Array.isArray(state.weather.forecast)) {
+      grid.innerHTML = state.weather.forecast.slice(0, 7).map(day => `
+        <div style="text-align:center;background:#f0ede6;border-radius:10px;padding:10px 6px">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:6px">${day.day}</div>
+          <div style="font-size:20px;margin-bottom:4px">${day.icon}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${day.temp}°</div>
+          <div style="font-size:10px;color:#185fa5">${day.rain}mm</div>
+        </div>
+      `).join('');
+    }
+  }
+
+  function updatePests() {
+    const pestPage = $('#page-pests');
+    if (!pestPage || !state.pests.length) return;
+    const grid = $('.pest-grid', pestPage);
+    if (!grid) return;
+
+    grid.innerHTML = state.pests.map(pest => `
+      <div class="pest-card" tabindex="0" role="button" data-pest="${pest.name}">
+        <div class="pest-header">
+          <span class="pest-name">${pest.name}</span>
+          <span class="pest-risk risk-${pest.risk.toLowerCase()}">${pest.risk} risk</span>
+        </div>
+        <div class="pest-desc">${pest.description}</div>
+        <div class="pest-treatment">Treatment: ${pest.treatment}</div>
+      </div>
+    `).join('');
+
+    $$('.pest-card', grid).forEach(card => {
+      card.addEventListener('click', () => {
+        const pest = state.pests.find(item => item.name === card.getAttribute('data-pest'));
+        showToast(pest ? `${pest.name}: ${pest.treatment}` : 'Pest details opened');
+      });
+    });
+  }
+
+  function updateIrrigation() {
+    const irrigationPage = $('#page-irrigation');
+    if (!irrigationPage || !state.irrigation) return;
+    const cards = $$('.dash-card', irrigationPage);
+    const values = [
+      { value: `${state.irrigation.totalUsedToday.toLocaleString()}<span style="font-size:14px">L</span>`, change: '↓ 12% vs yesterday' },
+      { value: '3 / 6', sub: '3 zones idle' },
+      { value: `${state.irrigation.averageMoisture}<span style="font-size:14px">%</span>`, change: 'Below 50% threshold' }
+    ];
+
+    values.forEach((item, index) => {
+      const card = cards[index];
+      if (!card) return;
+      const value = $('.dc-val', card);
+      const sub = $('.dc-sub', card);
+      const change = $('.dc-change', card);
+      if (item.value && value) value.innerHTML = item.value;
+      if (item.sub && sub) sub.textContent = item.sub;
+      if (item.change && change) change.textContent = item.change;
+    });
+
+    const tbody = $('table tbody', irrigationPage);
+    if (tbody) {
+      tbody.innerHTML = state.fields.map(field => {
+        const moisture = field.humidity;
+        const status = moisture < 40 ? 'Needed' : moisture < 55 ? 'Active' : 'Good';
+        const riskClass = moisture < 40 ? 'risk-high' : 'risk-low';
+        const action = moisture < 40 ? 'Start' : 'Schedule';
+        return `
+          <tr>
+            <td style="font-weight:600">${field.name}</td>
+            <td>${field.crops.join('/')}</td>
+            <td>${moisture}%</td>
+            <td>Auto</td>
+            <td><span class="pest-risk ${riskClass}">${status}</span></td>
+            <td><button class="action-btn" type="button">${action}</button></td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  function syncNotifications() {
+    const badge = $('.badge');
+    if (!badge) return;
+    const unread = state.notifications.filter(notification => !notification.read).length;
+    badge.textContent = String(unread);
+  }
+
+  function showPage(name, el) {
+    $$('.page').forEach(page => page.classList.remove('active'));
+    const page = document.getElementById(`page-${name}`);
+    if (page) page.classList.add('active');
+
+    $$('.nav-item').forEach(item => item.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    if (name === 'dashboard') {
+      updateDashboard();
+      animateYieldBars();
+    } else if (name === 'fields') {
+      updateFieldView(resolveField(state.activeFieldId || state.fields[0]?.id));
+      animateBar('nBar', state.npkByField.get(state.activeFieldId)?.nitrogen?.score || 48);
+      animateBar('pBar', state.npkByField.get(state.activeFieldId)?.phosphorus?.score || 40);
+      animateBar('kBar', state.npkByField.get(state.activeFieldId)?.potassium?.score || 55);
+    } else if (name === 'climate') {
+      updateClimate();
+    } else if (name === 'pests') {
+      updatePests();
+    } else if (name === 'irrigation') {
+      updateIrrigation();
+    }
+  }
+
+  function changeField(value) {
+    const field = resolveField(value);
+    if (!field) return;
+    updateFieldView(field);
+    showToast(`Field data updated: ${field.name}`);
+  }
+
+  function setNPKTab(tab, el) {
+    $$('.pill').forEach(button => {
+      button.classList.remove('on');
+      button.classList.add('off');
+    });
+    if (el) {
+      el.classList.add('on');
+      el.classList.remove('off');
+    }
+    if (tab === 'record') {
+      showToast('Record mode ready for new soil readings');
+    }
+  }
+
+  function toggleTask(el) {
+    if (!el) return;
+    el.classList.toggle('done');
+    el.textContent = el.classList.contains('done') ? '✓' : '';
+    showToast(el.classList.contains('done') ? 'Task marked complete' : 'Task reopened');
+  }
+
+  function selectCrop(name) {
+    const field = resolveField(state.activeFieldId || state.fields[0]?.id);
+    const crop = state.crops.find(entry => entry.name.toLowerCase() === name.toLowerCase() && (!field || entry.fieldId === field.id));
+    showToast(crop ? `${crop.name} · ${crop.variety}` : `Viewing ${name} details`);
+  }
+
+  async function addCrop() {
+    const modal = $('#addCropModal');
+    if (!modal) return;
+    const inputs = $$('select, input', modal);
+    const cropType = inputs[0]?.value || 'Maize';
+    const variety = inputs[1]?.value || 'SC403 Premium';
+    const plantingDate = inputs[2]?.value || new Date().toISOString().slice(0, 10);
+    const area = Number(inputs[3]?.value || 0);
+    const field = resolveField(state.activeFieldId || state.fields[0]?.id);
+
+    if (!field) {
+      showToast('No field selected');
+      return;
+    }
+
+    await fetchJSON('/crops', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: cropType,
+        variety,
+        fieldId: field.id,
+        yield: `${Math.max(area * 10, 1)}t`,
+        plantingDate,
+        area
+      })
+    });
+
+    modal.classList.remove('open');
+    showToast(`${cropType} added to ${field.name}`);
+    await refreshData();
+    updateFieldView(field);
+  }
+
+  async function refreshData() {
+    const [fields, crops, weather, pests, dashboard, irrigation, notifications] = await Promise.all([
+      fetchJSON('/fields'),
+      fetchJSON('/crops'),
+      fetchJSON('/weather/all'),
+      fetchJSON('/pest'),
+      fetchJSON('/dashboard'),
+      fetchJSON('/irrigation/status'),
+      fetchJSON('/notifications')
+    ]);
+
+    state.fields = fields;
+    state.crops = crops;
+    state.weather = weather;
+    state.pests = pests;
+    state.dashboard = dashboard;
+    state.irrigation = irrigation;
+    state.notifications = notifications;
+
+    const selectedField = state.fields[0];
+    state.activeFieldId = selectedField?.id || null;
+
+    state.npkByField.clear();
+    state.laiByField.clear();
+
+    await Promise.all(state.fields.map(async field => {
+      const [npk, lai] = await Promise.all([
+        fetchJSON(`/npk/field/${field.id}`).catch(() => null),
+        fetchJSON(`/npk/lai/field/${field.id}`).catch(() => null)
+      ]);
+      if (npk) state.npkByField.set(field.id, npk);
+      if (lai) state.laiByField.set(field.id, lai);
+    }));
+
+    const select = $('#fieldSelect');
+    if (select) {
+      select.innerHTML = state.fields.map(field => `<option value="${field.id}">${fieldLabel(field)}</option>`).join('');
+      if (state.activeFieldId) select.value = state.activeFieldId;
+    }
+
+    syncNotifications();
+    updateDashboard();
+    updateClimate();
+    updatePests();
+    updateIrrigation();
+    updateFieldView(resolveField(state.activeFieldId || state.fields[0]?.id));
+  }
+
+  function bindEvents() {
+    const select = $('#fieldSelect');
+    if (select) {
+      select.addEventListener('change', event => changeField(event.target.value));
+    }
+
+    const uploadArea = $('.upload-area');
+    if (uploadArea) {
+      uploadArea.addEventListener('click', () => showToast('AI scan started for crop image detection'));
+    }
+
+    const modalOverlay = $('#addCropModal');
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', event => {
+        if (event.target === modalOverlay) {
+          modalOverlay.classList.remove('open');
+        }
+      });
+    }
+  }
+
+  window.showPage = showPage;
+  window.changeField = changeField;
+  window.setNPKTab = setNPKTab;
+  window.toggleTask = toggleTask;
+  window.selectCrop = selectCrop;
+  window.addCrop = addCrop;
+  window.showToast = showToast;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    bindEvents();
+    try {
+      await refreshData();
+      showPage('fields');
+      setInterval(refreshData, 30000);
+    } catch (error) {
+      console.error('SmartGrow dashboard failed to initialize:', error);
+      showToast('SmartGrow data could not be loaded');
+    }
+  });
+
+  setTimeout(() => {
+    animateBar('nBar', 48);
+    animateBar('pBar', 40);
+    animateBar('kBar', 55);
+  }, 500);
+
+  setTimeout(() => {
+    $$('.lai-bar').forEach((bar, index) => {
+      const heights = ['30%', '45%', '60%', '75%', '55%', '90%', '70%'];
+      bar.style.height = '0';
+      setTimeout(() => {
+        bar.style.height = heights[index];
+        bar.style.transition = `height 0.6s ${index * 0.08}s ease`;
+      }, 50);
+    });
+  }, 600);
+})();
+</script>

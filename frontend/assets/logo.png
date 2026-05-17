@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="64">
+  <rect width="100%" height="100%" fill="#3d6b27" />
+  <text x="12" y="40" fill="#c5e235" font-size="32" font-weight="700" font-family="Inter, sans-serif">SmartGrow</text>
+</svg>

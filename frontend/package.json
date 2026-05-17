@@ -1,0 +1,9 @@
+{
+  "name": "smartgrow-frontend",
+  "version": "1.0.0",
+  "description": "SmartGrow - Precision Agriculture Frontend",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 3000"
+  }
+}
